@@ -5,13 +5,16 @@ const wss = new WebSocketServer({port:3002});
 
 
 wss.on("connection",(ws, req)=>{
+    
     const url = req.url;
     console.log(url)
+    const query2 = new URLSearchParams(url?.split('?')[1])
+    console.log(query2)
     const query = parse(req.url!, true).query;
     const roomId = query.roomId
     console.log(roomId)
     if(!roomId){
-        ws.send("RoomId not available")
+        ws.send("RoomId not available") 
         ws.close();
     }
     ws.on("message",(message)=>{

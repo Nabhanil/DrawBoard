@@ -1,7 +1,10 @@
 import { Router } from "express";
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from "../config";
+
 import { auth } from "../Middlewares/auth";
+import {PrismaClient}  from "@repo/database"
+import { JWT_SECRET } from "@repo/common";
+import {userSchema} from "@repo/backend-common"
 
 const userRouter: Router = Router();
 

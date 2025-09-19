@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@repo/typescript-config": "workspace: *",
+    "@repo/common": "workspace: *",
     "ws": "^8.18.3"
   },
   "keywords": [],

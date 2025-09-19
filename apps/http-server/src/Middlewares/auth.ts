@@ -1,6 +1,6 @@
+import { JWT_SECRET } from "@repo/common";
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { JWT_SECRET } from "../config";
 
 export const auth = (req: Request, res: Response, next: NextFunction)=>{
     try {
