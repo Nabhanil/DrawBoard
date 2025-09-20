@@ -1,10 +1,10 @@
-import { Router } from "express";
+import express, { Router } from "express";
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 import { auth } from "../Middlewares/auth";
-import {PrismaClient}  from "@repo/database"
-import { JWT_SECRET } from "@repo/common";
-import {userSchema} from "@repo/backend-common"
+import { userSchema } from "@repo/backend-common/config";
+import { JWT_SECRET } from "@repo/common/config";
 
 const userRouter: Router = Router();
 
@@ -21,11 +21,49 @@ userRouter.get('/', (req,res)=>{
     }
 })
 
+userRouter.use(express.json())
 userRouter.post('/signup', async (req,res)=>{
     try {
-        res.status(201).json({
-            message: "Working signup"
+        const {firstname, lastname, email, username, password} = req.body;
+        console.log("Incoming request body:", req.body)
+
+        const {success, error} = userSchema.safeParse(req.body)
+        if(!success){
+            return res.status(403).json({
+                message: "Invalid credentials",
+                error
+            })
+        }
+
+        const hashedPassword = bcrypt.hash(password, 10);
+        res.json({
+            user: req.body
         })
+        // const prisma = new PrismaClient();
+
+        // const response = await prisma.create({
+        //     firstname,
+        //     lastname,
+        //     username,
+        //     email,
+        //     password : hashedPassword
+        // })
+
+        // if(!response){
+        //     return res.status(400).json({
+        //         message: "User creation failed"
+        //     })
+        // }
+
+        // return res.status(201).json({
+        //     message: "User successfully added",
+        //     User:{
+        //         username: response.username,
+        //         email: response.email,
+        //         createdAt: response.createdAt
+        //     }
+        // })
+        
     } catch (error) {
         return res.status(500).json({
             message: "Server failed at /signup",
