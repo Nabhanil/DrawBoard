@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 import { auth } from "../Middlewares/auth";
 import { userSchema } from "@repo/backend-common/config";
 import { JWT_SECRET } from "@repo/common/config";
+import { prismaClient } from "@repo/db/client";
 
 const userRouter: Router = Router();
 
@@ -35,34 +36,32 @@ userRouter.post('/signup', async (req,res)=>{
             })
         }
 
-        const hashedPassword = bcrypt.hash(password, 10);
-        res.json({
-            user: req.body
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const response =await prismaClient.user.create({
+            data:{
+                firstname,
+                lastname,
+                username,
+                email,
+                password: hashedPassword
+            }
         })
-        // const prisma = new PrismaClient();
+        if(!response){
+            return res.status(400).json({
+                message: "User creation failed",
+            })
+        }
 
-        // const response = await prisma.create({
-        //     firstname,
-        //     lastname,
-        //     username,
-        //     email,
-        //     password : hashedPassword
-        // })
-
-        // if(!response){
-        //     return res.status(400).json({
-        //         message: "User creation failed"
-        //     })
-        // }
-
-        // return res.status(201).json({
-        //     message: "User successfully added",
-        //     User:{
-        //         username: response.username,
-        //         email: response.email,
-        //         createdAt: response.createdAt
-        //     }
-        // })
+        return res.status(200).json({
+            message: "User created successfully",
+            user: {
+                name: response.firstname + " " + response.lastname,
+                email: response.email,
+                username: response.username
+            }
+        })
+ 
         
     } catch (error) {
         return res.status(500).json({

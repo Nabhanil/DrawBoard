@@ -14,7 +14,7 @@ model User {
   firstname String
   lastname  String
   password  String
-  avatarurl String
+  avatarurl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Rooms     Room[]
